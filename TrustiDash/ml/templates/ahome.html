@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - TrustiDash Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles from newupload.html */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fa; /* Light background */
+            min-height: 100vh;
+            color: #333; /* Default text color */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+        }
+
+        /* New Rick Look for Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 240px; /* Slightly wider */
+            background: #34495e; /* Darker, modern background */
+            border-right: 1px solid #2c3e50; /* Darker border */
+            padding: 30px 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.15); /* More pronounced shadow */
+            overflow-y: auto;
+            transition: left 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1000;
+            display: flex; /* Flexbox for internal alignment */
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            color: #ecf0f1; /* Light color for title */
+            margin-bottom: 40px; /* More spacing */
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            flex-grow: 1; /* Allows list to take available space */
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #ecf0f1; /* Light color for links */
+            display: block;
+            padding: 12px 15px; /* Increased padding */
+            margin-bottom: 8px; /* Space between items */
+            border-radius: 6px; /* Slightly rounded corners for items */
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between icon and text */
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #4CAF50; /* Vibrant hover background */
+            color: #ffffff; /* White text on hover */
+            transform: translateX(5px); /* Slight slide effect on hover */
+        }
+        
+        .sidebar ul li a.active {
+            background-color: #007bff; /* Active item background */
+            color: #ffffff; /* White text for active item */
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .sidebar ul li a i {
+            font-size: 20px; /* Adjust icon size */
+        }
+
+        .main {
+            margin-left: 240px; /* Adjusted margin for wider sidebar */
+            padding: 30px 40px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 26px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            color: #333; /* Light mode toggle color */
+            transition: color 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            color: #2c3e50; /* Light mode header color */
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333; /* Light mode icon color */
+            transition: color 0.3s ease;
+        }
+
+        /* Dark Theme */
+        body.dark-theme {
+            background-color: #282c36; /* Dark background */
+            color: #e0e0e0; /* Light text color */
+        }
+
+        .dark-theme .sidebar {
+            background: #1a1e24; /* Even darker for dark theme sidebar */
+            border-right: 1px solid #2f343e; /* Darker border */
+            box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+        }
+
+        .dark-theme .sidebar h2 {
+            color: #61dafb; /* Dark theme accent color for title */
+        }
+
+        .dark-theme .sidebar ul li a {
+            color: #b0b0b0; /* Lighter grey for links in dark mode */
+        }
+
+        .dark-theme .sidebar ul li a:hover {
+            background-color: #21a1f1; /* Dark theme vibrant hover background */
+            color: #ffffff;
+        }
+
+        .dark-theme .sidebar ul li a.active {
+            background-color: #61dafb; /* Dark theme active item background */
+            color: #21252b; /* Dark text for active item in dark mode */
+        }
+
+        .dark-theme .menu-toggle {
+            color: #e0e0e0; /* Dark mode toggle color */
+        }
+
+        .dark-theme .header h2 {
+            color: #e0e0e0; /* Dark mode header color */
+        }
+
+        .dark-theme .header p {
+            color: #b0b0b0 !important; /* Dark theme secondary text */
+        }
+
+        .dark-theme .theme-toggle-btn {
+            color: #e0e0e0; /* Dark mode icon color */
+        }
+
+        .overlay {
+            display: none;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -100%;
+                width: 220px; /* Revert width for mobile */
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .overlay.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.4);
+                z-index: 999;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h2 {
+                font-size: 20px;
+            }
+        }
+
+
+        /* Existing products.html styles (adjusted for integration) */
+        :root {
+            /* Light Theme Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-accent: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-muted: #6c757d;
+
+            /* Accent Colors */
+            --color-pink: #09b9ff;
+            --color-blue: #4361ee;
+            --color-green: #2ecc71;
+            --color-orange: #ff9f43;
+            --color-red: #ff4757;
+            --color-purple: #9b59b6;
+            --color-gold: #d4af37;
+
+            /* Status Colors */
+            --color-success: var(--color-green);
+            --color-warning: var(--color-orange);
+            --color-danger: var(--color-red);
+            --color-info: var(--color-blue);
+
+            /* Border, Shadow & Effect Colors */
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --hover-bg: rgba(0, 0, 0, 0.05);
+
+            /* Font Settings */
+            --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            --fs-h1: 1.75rem;
+            --fs-h2: 1.5rem;
+            --fs-h3: 1.25rem;
+            --fs-body: 0.9375rem;
+            --fs-small: 0.875rem;
+            --fs-xs: 0.75rem;
+
+            /* Font Weights */
+            --fw-light: 300;
+            --fw-regular: 500;
+            --fw-bold: 700;
+
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+
+            /* Border Radius */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-full: 50%;
+
+            /* Animation */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
+
+            /* Table Styles */
+            --table-header-bg: #f1f3f5;
+            --table-hover-bg: rgba(0, 0, 0, 0.02);
+            --table-border: #e9ecef;
+
+            /* Chart Colors */
+            --chart-color1: var(--color-pink);
+            --chart-color2: var(--color-blue);
+            --chart-color3: var(--color-green);
+            --chart-color4: var(--color-orange);
+
+            /* Other UI Elements */
+            --btn-primary-bg: var(--color-pink);
+            --btn-primary-text: white;
+            --btn-primary-hover: #ff4971;
+            --input-bg: white;
+            --input-border: #ced4da;
+            --input-focus: var(--color-pink);
+        }
+
+        /* Dark Theme Variables */
+        body.dark-theme { /* Changed to directly apply to body for consistency with newupload.html */
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-accent: #2a2a2a;
+            --text-primary: #f8f9fa;
+            --text-secondary: #e9ecef;
+            --text-muted: #adb5bd;
+
+            /* Border, Shadow & Effect Colors */
+            --border-color: #2c2c2c;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+
+            /* Table Styles */
+            --table-header-bg: #2a2a2a;
+            --table-hover-bg: rgba(255, 255, 255, 0.05);
+            --table-border: #2c2c2c;
+
+            /* Other UI Elements */
+            --btn-primary-bg: var(--color-pink);
+            --btn-primary-text: white;
+            --btn-primary-hover: #ff4971;
+            --input-bg: #2a2a2a;
+            --input-border: #3a3a3a;
+            --input-focus: var(--color-pink);
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            font-weight: var(--fw-regular);
+            font-size: var(--fs-small);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            outline: none;
+        }
+
+        .btn-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+        }
+
+        .btn-primary:hover {
+            background: #3ad1ff;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(18, 188, 255, 0.3);
+        }
+
+        .btn-success {
+            background: var(--color-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--color-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e74c3c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+        }
+
+        .btn-warning {
+            background: var(--color-orange);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 159, 67, 0.3);
+        }
+
+        .btn-info {
+            background: var(--color-blue);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #3742fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+            padding: 0 10px;
+        }
+
+        .product-box {
+            background-color: var(--bg-secondary);
+            box-shadow: var(--shadow-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            position: relative;
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .product-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px var(--shadow-color);
+        }
+
+        .product-box .image-container {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .product-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: all var(--transition-normal);
+        }
+
+        .product-box:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-box h2 {
+            font-size: 18px;
+            margin: 15px;
+            color: var(--text-primary);
+            font-weight: var(--fw-bold);
+            line-height: 1.3;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+        }
+
+        .product-box .quantity {
+            position: absolute;
+            bottom: 10px; /* Position to the bottom */
+            right: 10px; /* Position to the right */
+            background-color: rgba(0, 0, 0, 0.6); /* Reverted to old code color */
+            color: white;
+            padding: 5px 10px;
+            border-radius: var(--radius-sm);
+            font-size: var(--fs-xs);
+            z-index: 10; /* Ensure it's above other elements if needed */
+        }
+
+        .product-box .discount-badge {
+            background-color: var(--color-red); /* Changed to red color */
+            color: white;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font-size: var(--fs-xs);
+            font-weight: var(--fw-bold);
+            position: absolute; /* Position relative to .image-container */
+            top: 10px;
+            left: 10px;
+            z-index: 10; /* Ensure it's above the image */
+        }
+
+        .product-box .price-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+            padding: 0 15px;
+            flex-wrap: wrap; /* Added for responsiveness */
+        }
+
+        .product-box .old-price {
+            text-decoration: line-through;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .product-box .new-price {
+            color: var(--color-pink);
+            font-weight: var(--fw-bold);
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .product-box .product-actions {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: 0 15px var(--space-lg);
+        }
+
+        /* Notification Animation */
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            0% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: var(--fw-regular);
+            z-index: 10000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s forwards, slideOut 0.3s forwards 2.7s;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .notification.success {
+            background: var(--color-green);
+        }
+
+        .notification.error {
+            background: var(--color-red);
+        }
+
+        .notification.info {
+            background: var(--color-blue);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .product-box .price-container {
+                flex-direction: column; /* Stack prices on smaller screens */
+                align-items: center;
+                gap: 5px;
+            }
+            .product-box .old-price,
+            .product-box .new-price {
+                margin: 0; /* Remove horizontal margins for stacking */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i>Dashboard</a></li>
+            <li><a href="{% url 'ahome' %}" ><i class="fas fa-box"></i>Products</a></li>
+            <li><a href="{% url 'analatics' %}"><i class="fas fa-chart-bar"></i>Analytics</a></li>
+            <li><a href="{% url 'upload' %}"><i class="fas fa-upload"></i>Upload Product</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <button id="menu-toggle" class="menu-toggle">☰</button>
+            <h2>Admin Panel</h2> <button id="theme-toggle-btn" class="theme-toggle-btn">Dark</button>
+        </div>
+        <p style="margin-top: 5px; color: #777;">Products - Manage your product catalog</p> <section id="products" class="admin-section">
+            <div class="products-grid">
+                {% for p in h %}
+                <div class="product-box">
+                    <div class="image-container">
+                        
+                        {% if not p.product_url %}
+                            <img src="{{p.product_url}}" alt="no image">
+                        {% else %}
+                            <img src="{{p.product_url}}" height="150px" width="150px">
+                        {% endif %}
+
+                        <span class="quantity">Qty : {{p.product_quantity}}</span>
+                        <span class="discount-badge">{{p.product_discount}}% OFF</span>
+                    </div>
+                    <h2>{{ p.product_name }}</h2>
+                    <div class="price-container">
+                        <p class="old-price"><del>₹{{ p.product_price }}</del></p>
+                        <p class="new-price">₹99.99</p>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn btn-primary"><i class="fas fa-edit"></i> <a href="{% url 'upload' p.id %}" style="text-decoration: none;color: white;">Edit</a></button>
+                        <button class="btn btn-danger"><i class="fas fa-trash-alt"></i> <a href="{% url 'delete' p.id %}" style="text-decoration: none;color: white;">Delete</a></button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const body = document.body;
+
+        // Toggle sidebar visibility
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        // Hide sidebar when clicking outside
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Function to set the theme and update button text
+        function setTheme(theme) {
+            body.className = theme; // Set the body class directly
+            localStorage.setItem('theme', theme); // Store preference
+            themeToggleBtn.textContent = theme === 'dark-theme' ? 'light' : 'Dark'; // Update icon/text
+        }
+
+        // Check for saved theme in localStorage on page load
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else {
+            // Default to light theme if no preference saved
+            setTheme('light-theme');
+        }
+
+        // Toggle dark theme on button click
+        themeToggleBtn.addEventListener('click', () => {
+            if (body.classList.contains('dark-theme')) {
+                setTheme('light-theme');
+            } else {
+                setTheme('dark-theme');
+            }
+        });
+
+        // Products specific scripts
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add product action handlers
+            
+        });
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Custom Confirmation Modal (replaces window.confirm)
+        function showCustomConfirm(message, onConfirm) {
+            const modalId = 'customConfirmModal';
+            let modal = document.getElementById(modalId);
+
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'custom-modal-overlay';
+                modal.innerHTML = `
+                    <div class="custom-modal-content">
+                        <p id="customConfirmMessage"></p>
+                        <div class="custom-modal-actions">
+                            <button id="customConfirmCancel" class="btn btn-secondary">Cancel</button>
+                            <button id="customConfirmOK" class="btn btn-danger">OK</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                modal.querySelector('#customConfirmCancel').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+            }
+
+            modal.querySelector('#customConfirmMessage').textContent = message;
+            const confirmButton = modal.querySelector('#customConfirmOK');
+            
+            // Remove previous event listener to prevent multiple calls
+            const newConfirmButton = confirmButton.cloneNode(true);
+            confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
+
+            newConfirmButton.addEventListener('click', () => {
+                onConfirm();
+                modal.style.display = 'none';
+            });
+
+            modal.style.display = 'flex';
+        }
+
+        // Add styles for the custom modal
+        const modalStyles = document.createElement('style');
+        modalStyles.textContent = `
+            .custom-modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                display: none; /* Hidden by default */
+            }
+            .custom-modal-content {
+                background-color: #fff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                text-align: center;
+                max-width: 400px;
+                width: 90%;
+                color: #333;
+            }
+            .custom-modal-content p {
+                margin-bottom: 20px;
+                font-size: 1.1rem;
+            }
+            .custom-modal-actions {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+            }
+            .custom-modal-actions .btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
+            }
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+
+            /* Dark theme for modal */
+            body.dark-theme .custom-modal-content {
+                background-color: #2f343e;
+                color: #e0e0e0;
+            }
+        `;
+        document.head.appendChild(modalStyles);
+
+    </script>
+</body>
+</html>

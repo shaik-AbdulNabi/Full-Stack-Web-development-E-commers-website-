@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+        :root {
+            /* Light Theme Colors */
+            --primary-bg-color: #f0f0f0;
+            --card-bg-color: #ffffff;
+            --text-color-dark: #333;
+            --text-color-light: #fff;
+            --accent-color: #4bf3ff;
+            /* A shade of red for buttons and right panel */
+            --button-hover-color: #3984e6;
+            --border-color: #ddd;
+            --input-border-focus: #ccc;
+            --social-icon-bg: #eee;
+            --social-icon-border: #ccc;
+        }
+
+        body.dark-theme {
+            /* Dark Theme Colors */
+            --primary-bg-color: #1a1a2e;
+            --card-bg-color: #16213e;
+            --text-color-dark: #e0e0e0;
+            --text-color-light: #fff;
+            --accent-color: #0f3460;
+            --button-hover-color: #0a1f3c;
+            --border-color: #0f3460;
+            --input-border-focus: #2e4a6e;
+            --social-icon-bg: #0f3460;
+            --social-icon-border: #1a1a2e;
+        }
+
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--primary-bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            background-color: var(--card-bg-color);
+            border-radius: 10px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+                0 10px 10px rgba(0, 0, 0, 0.22);
+            position: relative;
+            width: 768px;
+            max-width: 100%;
+            min-height: 480px;
+            overflow: hidden;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transition: all 0.6s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sign-in-container {
+            left: 0;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        form {
+            background-color: var(--card-bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            height: 100%;
+            text-align: center;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        h1 {
+            font-weight: bold;
+            margin: 0;
+            color: var(--text-color-dark);
+            transition: color 0.3s ease;
+        }
+
+        .social-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .social-container a {
+            border: 1px solid var(--social-icon-border);
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+            height: 40px;
+            width: 40px;
+            color: var(--text-color-dark);
+            text-decoration: none;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .social-container a:hover {
+            background-color: var(--social-icon-bg);
+        }
+
+        p {
+            font-size: 14px;
+            font-weight: 100;
+            line-height: 20px;
+            letter-spacing: 0.5px;
+            margin: 15px 0 20px;
+            color: var(--text-color-dark);
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        span {
+            font-size: 12px;
+            color: var(--text-color-dark);
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        a {
+            color: var(--text-color-dark);
+            font-size: 14px;
+            text-decoration: none;
+            margin: 15px 0;
+            transition: color 0.3s ease;
+        }
+
+        input {
+            background-color: var(--primary-bg-color);
+            border: none;
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            border-radius: 5px;
+            outline: none;
+            color: var(--text-color-dark);
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        input::placeholder {
+            color: var(--text-color-dark);
+            font-weight: lighter;
+            opacity: 0.7; /* Make placeholder slightly transparent in dark mode */
+        }
+
+        button {
+            border-radius: 20px;
+            border: 1px solid rgb(52, 191, 255);
+            background-color: #39afe6;
+            color: rgb(255, 255, 255);
+            font-size: 12px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 80ms ease-in, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button.ghost {
+            background-color: transparent;
+            margin-left: 100px;
+            border-color: var(--text-color-light);
+            color: var(--text-color-light);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        button.ghost:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .overlay {
+            background: linear-gradient(to right, #3984e6, #39afe6); /* Light theme gradient */
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0 0;
+            color: var(--text-color-light);
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out, background 0.3s ease;
+        }
+
+        body.dark-theme .overlay {
+            background: linear-gradient(to right, #0f3460, #16213e); /* Dark theme gradient */
+        }
+
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        /* Move to Sign Up */
+        .container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+        }
+
+        .container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: show 0.6s;
+        }
+
+        .container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        /* Keyframes for sign-up form fade-in */
+        @keyframes show {
+
+            0%,
+            49.99% {
+                opacity: 0;
+                z-index: 1;
+            }
+
+            50%,
+            100% {
+                opacity: 1;
+                z-index: 5;
+            }
+        }
+        #signIn{
+            margin-left: -100px;
+        }
+
+        /* Adjustments for the expanded sign-up form */
+        .sign-up-container form {
+            justify-content: flex-start; /* Align items to the top */
+            padding-top: 20px; /* Add some padding to the top */
+            overflow-y: auto; /* Enable vertical scrolling */
+            height: 100%; /* Ensure the form takes full height */
+        }
+        .sign-up-container input {
+            margin: 5px 0; /* Reduce vertical margin for inputs */
+        }
+        .sign-up-container h1 {
+            margin-bottom: 10px; /* Add some space below the heading */
+        }
+        .sign-up-container .social-container {
+            margin-bottom: 10px; /* Adjust margin for social icons */
+        }
+        .sign-up-container span {
+            margin-bottom: 5px; /* Adjust margin for span */
+        }
+
+        /* Styles for user type buttons */
+        .user-type-selection {
+            display: flex;
+            margin: 10px 0 15px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .user-type-selection input[type="radio"] {
+            display: none; /* Hide the actual radio button */
+        }
+
+        .user-type-selection label {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--primary-bg-color);
+            color: var(--text-color-dark);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            text-align: center;
+            border-radius: 5px; /* Added for consistency */
+        }
+
+        .user-type-selection label:first-of-type {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-right: -1px; /* Overlap borders */
+        }
+
+        .user-type-selection label:last-of-type {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .user-type-selection input[type="radio"]:checked + label {
+            background-color: #39afe6; /* Accent color when checked */
+            color: var(--text-color-light);
+            border-color: #39afe6;
+        }
+        body.dark-theme .user-type-selection input[type="radio"]:checked + label {
+            background-color: #0a1f3c; /* Darker accent for checked in dark theme */
+            border-color: #0a1f3c;
+        }
+
+        .user-type-selection label:hover {
+            background-color: #e0e0e0;
+        }
+        body.dark-theme .user-type-selection label:hover {
+            background-color: #2e4a6e; /* Darker hover in dark theme */
+        }
+
+        .user-type-selection input[type="radio"]:checked + label:hover {
+            background-color: #3984e6; /* Darker accent on hover when checked */
+        }
+        body.dark-theme .user-type-selection input[type="radio"]:checked + label:hover {
+            background-color: #0f3460; /* Even darker accent on hover when checked in dark theme */
+        }
+
+        /* Alert styling */
+        .alert {
+            padding: 10px;
+            margin: 10px auto;
+            width: 90%;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .alert.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert.info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .alert.warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            color: var(--text-color-dark);
+            font-size: 1.2em;
+            z-index: 101; /* Ensure it's above other elements */
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--primary-bg-color);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <div class="container" id="container">
+
+
+
+
+        <div class="form-container sign-up-container">
+            <form method="post">
+                {% csrf_token %}
+                <h1>Create Account</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registration</span>
+
+                {{ form1.user_name }}
+                {{ form1.user_password }}
+                {{ form1.user_email }}
+                {{ form1.user_phno }}
+                {{ form1.user_pincode }}
+                {{ form1.user_country }}
+                {{ form1.user_state }}
+                {{ form1.user_mundale }}
+                {{ form1.user_city_or_village }}
+
+                <button type="submit" name="signup">Sign Up</button>
+
+            </form>
+
+        </div>
+        <div class="form-container sign-in-container">
+            <form method="post">
+                {% csrf_token %}
+                <h1>Sign in</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+
+                <div class="user-type-selection">
+                    <input type="radio" id="signInUser" name="user_type" value="user" {% if form.user_type.value == 'user' %}checked{% endif %}>
+                    <label for="signInUser">User</label>
+
+                    <input type="radio" id="signInAdmin" name="user_type" value="admin" {% if form.user_type.value == 'admin' %}checked{% endif %}>
+                    <label for="signInAdmin">Admin</label>
+                </div>
+
+                {{ form.username }}
+                {{ form.password }}
+
+                <a href="{% url 'forgot_password' %}">Forgot your password?</a>
+                <button type="submit" name="signin">Sign In</button>
+
+            </form>
+
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1 style="color: whitesmoke; margin-left: -100px; font-size: 1.7em;">Welcome To TrustiDash</h1>
+                    <p style="color: whitesmoke; margin-left: -90px; width: 400px;">To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1 style="color: whitesmoke; margin-left: 100px;">Welcome Back To, TrustiDash</h1>
+                    <p style="color: whitesmoke; margin-left: 100px;">Enter your personal details and start journey with
+                        us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            // Optionally, change the icon based on the theme
+            if (body.classList.contains('dark-theme')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+
+        // Check for preferred theme on load (optional)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            body.classList.add('dark-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    </script>
+</body>
+
+</html>

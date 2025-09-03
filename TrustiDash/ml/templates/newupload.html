@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload New Product</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - TrustiDash Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Light Theme */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f7fa; /* Light background */
+      min-height: 100vh;
+      color: #333; /* Default text color */
+      transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    }
+
+    /* New Rick Look for Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 240px; /* Slightly wider */
+      background: #34495e; /* Darker, modern background */
+      border-right: 1px solid #2c3e50; /* Darker border */
+      padding: 30px 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.15); /* More pronounced shadow */
+      overflow-y: auto;
+      transition: left 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 1000;
+      display: flex; /* Flexbox for internal alignment */
+      flex-direction: column;
+    }
+
+    .sidebar h2 {
+      color: #ecf0f1; /* Light color for title */
+      margin-bottom: 40px; /* More spacing */
+      text-align: center;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      flex-grow: 1; /* Allows list to take available space */
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #ecf0f1; /* Light color for links */
+      display: block;
+      padding: 12px 15px; /* Increased padding */
+      margin-bottom: 8px; /* Space between items */
+      border-radius: 6px; /* Slightly rounded corners for items */
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Space between icon and text */
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #4CAF50; /* Vibrant hover background */
+      color: #ffffff; /* White text on hover */
+      transform: translateX(5px); /* Slight slide effect on hover */
+    }
+    
+    .sidebar ul li a.active {
+      background-color: #007bff; /* Active item background */
+      color: #ffffff; /* White text for active item */
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .sidebar ul li a i {
+        font-size: 20px; /* Adjust icon size */
+    }
+
+    .main {
+      margin-left: 240px; /* Adjusted margin for wider sidebar */
+      padding: 30px 40px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 26px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      color: #333; /* Light mode toggle color */
+      transition: color 0.3s ease;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header h2 {
+      font-size: 24px;
+      color: #2c3e50; /* Light mode header color */
+      transition: color 0.3s ease;
+    }
+
+    .form-section {
+      background: #fff; /* Light form background */
+      margin-top: 20px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-section h3 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #2c3e50; /* Light mode heading color */
+      transition: color 0.3s ease;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333; /* Light mode label color */
+      transition: color 0.3s ease;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc; /* Light mode border */
+      border-radius: 6px;
+      font-size: 14px;
+      background: #fff; /* Light mode input background */
+      color: #333; /* Light mode input text */
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .submit-btn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background-color: #007bff; /* Accent color */
+      border: none;
+      color: white;
+      font-size: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #0069d9; /* Darker accent on hover */
+    }
+
+    .overlay {
+      display: none;
+    }
+
+    .theme-toggle-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333; /* Light mode icon color */
+      transition: color 0.3s ease;
+    }
+
+    /* Dark Theme */
+    body.dark-theme {
+      background-color: #282c36; /* Dark background */
+      color: #e0e0e0; /* Light text color */
+    }
+
+    .dark-theme .sidebar {
+      background: #1a1e24; /* Even darker for dark theme sidebar */
+      border-right: 1px solid #2f343e; /* Darker border */
+      box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+    }
+
+    .dark-theme .sidebar h2 {
+      color: #61dafb; /* Dark theme accent color for title */
+    }
+
+    .dark-theme .sidebar ul li a {
+      color: #b0b0b0; /* Lighter grey for links in dark mode */
+    }
+
+    .dark-theme .sidebar ul li a:hover {
+      background-color: #21a1f1; /* Dark theme vibrant hover background */
+      color: #ffffff;
+    }
+
+    .dark-theme .sidebar ul li a.active {
+      background-color: #61dafb; /* Dark theme active item background */
+      color: #21252b; /* Dark text for active item in dark mode */
+    }
+
+    .dark-theme .menu-toggle {
+      color: #e0e0e0; /* Dark mode toggle color */
+    }
+
+    .dark-theme .header h2 {
+      color: #e0e0e0; /* Dark mode header color */
+    }
+
+    .dark-theme .header p {
+        color: #b0b0b0 !important; /* Dark theme secondary text */
+    }
+
+    .dark-theme .form-section {
+      background: #2f343e; /* Dark form background */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-theme .form-section h3 {
+      color: #e0e0e0; /* Dark mode heading color */
+    }
+
+    .dark-theme .form-group label {
+      color: #e0e0e0; /* Dark mode label color */
+    }
+
+    .dark-theme .form-control {
+      border: 1px solid #555; /* Dark mode border */
+      background: #3a3f4a; /* Dark mode input background */
+      color: #e0e0e0; /* Dark mode input text */
+    }
+
+    .dark-theme .submit-btn {
+      background-color: #61dafb; /* Dark theme accent color */
+      color: #21252b; /* Dark text for button */
+    }
+
+    .dark-theme .submit-btn:hover {
+      background-color: #21a1f1; /* Darker accent on hover */
+    }
+
+    .dark-theme .theme-toggle-btn {
+      color: #e0e0e0; /* Dark mode icon color */
+    }
+
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -100%;
+        width: 220px; /* Revert width for mobile */
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .overlay.active {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+        z-index: 999;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-section {
+        padding: 20px;
+      }
+
+      .header h2 {
+        font-size: 20px;
+      }
+
+      .submit-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar" id="sidebar">
+    <h2>Admin Panel</h2>
+    <ul>
+      <li><a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i>Dashboard</a></li>
+            <li><a href="{% url 'ahome' %}" ><i class="fas fa-box"></i>Products</a></li>
+            <li><a href="{% url 'analatics' %}"><i class="fas fa-chart-bar"></i>Analytics</a></li>
+            <li><a href="{% url 'upload' %}"><i class="fas fa-upload"></i>Upload Product</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="header">
+        <button id="menu-toggle" class="menu-toggle">☰</button>
+        <h2>Upload New Product</h2>
+        <button id="theme-toggle-btn" class="theme-toggle-btn">Dark</button> </div>
+    <p style="margin-top: 5px; color: #777;">Add a new product to your inventory</p>
+
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-section">
+        <h3>Product Details</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="{{ form.product_name.id_for_label }}">Product Name</label>
+            {{ form.product_name }}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.product_quantity.id_for_label }}">Stock Quantity</label>
+            {{ form.product_quantity }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="{{ form.product_price.id_for_label }}">Price</label>
+            {{ form.product_price }}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.product_discount.id_for_label }}">Discount</label>
+            {{ form.product_discount }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.product_brand.id_for_label }}">Brand</label>
+          {{ form.product_brand }}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.product_category.id_for_label }}">Category</label>
+          {{ form.product_category }}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.product_url.id_for_label }}">Image URL</label>
+          {{ form.product_url }}
+        </div>
+
+        <button type="submit" class="submit-btn">Upload Product</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const body = document.body;
+
+    // Toggle sidebar visibility
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+
+    // Hide sidebar when clicking outside
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+
+    // Function to set the theme and update button text
+    function setTheme(theme) {
+      body.className = theme; // Set the body class directly
+      localStorage.setItem('theme', theme); // Store preference
+      themeToggleBtn.textContent = theme === 'dark-theme' ? 'light' : 'Dark'; // Update icon/text
+    }
+
+    // Check for saved theme in localStorage on page load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else {
+      // Default to light theme if no preference saved
+      setTheme('light-theme');
+    }
+
+    // Toggle dark theme on button click
+    themeToggleBtn.addEventListener('click', () => {
+      if (body.classList.contains('dark-theme')) {
+        setTheme('light-theme');
+      } else {
+        setTheme('dark-theme');
+      }
+    });
+  </script>
+</body>
+</html>

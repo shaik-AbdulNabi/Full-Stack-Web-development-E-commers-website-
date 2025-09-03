@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ uname }}'s Cart - TrustiDash</title>
+  <style>
+    /* Light theme (default) */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 90px;
+      color: #333;
+    }
+
+    .cart-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .cart-items {
+      width: 100%;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .cart-item-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+      border-bottom: 2px dashed #ccc;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: #fefefe;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+    }
+
+    .item-image img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .item-details {
+      margin-left: 20px;
+      flex-grow: 1;
+    }
+
+    .item-name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .item-brand {
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .item-meta {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .item-price {
+      font-size: 16px;
+      color: green;
+      font-weight: 600;
+    }
+
+    .quantity-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .quantity-box input {
+      width: 40px;
+      text-align: center;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      color: #333;
+    }
+
+    .btn {
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      background: #ddd;
+      border-radius: 5px;
+      color: #333;
+    }
+
+    .remove-btn {
+      margin-left: 20px;
+      color: red;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .total-section {
+      margin-top: 30px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .buy-btn {
+      margin-top: 20px;
+      padding: 10px 30px;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .change-btn {
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-box {
+      background: #fff;
+      width: 50vh;
+      max-width: 450px;
+      max-height: 60vh;
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      color: #333;
+    }
+
+    .modal-box::-webkit-scrollbar {
+      display: none;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-btn {
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #888;
+    }
+
+    .add-address {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      border: none;
+      padding: 8px 16px;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      margin: 10px 0 20px;
+      float: right;
+    }
+
+    .address-card {
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      font-size: 14px;
+      background: #fafafa;
+      position: relative;
+    }
+
+    .blue-border {
+      border-color: #00c6ff;
+    }
+
+    .red-border {
+      border-color: #ffaaaa;
+    }
+
+    .bottom-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .remove {
+      color: red;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .selected-btn {
+      background: #00aaff;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+    .form-group {
+      margin-top: 10px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #333;
+    }
+
+    .save-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Header */
+    .main-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #161616;
+      color: white;
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .trusti {
+      color: #f9f9f9;
+    }
+    .dash {
+      color: #007bff;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 25px;
+    }
+    .nav-menu a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+    .nav-menu a:hover {
+      color: #00c6ff;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-actions a,
+    .header-actions button {
+      color: white;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+    }
+/*Home,wish list ,Light change color change */
+
+    .header-actions a:hover,
+    .header-actions button:hover {
+      color: #ff0000;
+    }
+
+    body {
+      padding-top: 70px;
+    }
+
+    /* Payment Options Container */
+    .payment-options-container {
+      margin-top: 30px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    /* Payment Option Labels */
+    .payment-options-container label {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    /* Specific border for COD which has 2px in light theme */
+    .payment-options-container label[for*="cod"] {
+        border: 2px solid #ccc;
+    }
+
+    /* Specific border for Net Banking which has 2px in light theme */
+    .payment-options-container label[for*="netbanking"] {
+        border: 2px solid #ccc;
+    }
+    /* Dark theme */
+    body.dark-theme {
+      background-color: #121212;
+      color: #f5f5f5;
+    }
+
+    .dark-theme .cart-items {
+      background: #121212;
+      color: #f5f5f5;
+    }
+
+    .dark-theme .cart-item {
+      background: #1e1e1e;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      border: 1px solid #555;
+    }
+
+    .dark-theme .item-brand,
+    .dark-theme .item-meta {
+      color: #bbb;
+    }
+
+    .dark-theme .item-price {
+      color: #90ee90; /* Lighter green for dark mode */
+    }
+
+    .dark-theme .quantity-box input {
+      background-color: #555;
+      color: #f5f5f5;
+      border: 1px solid #666;
+    }
+
+    .dark-theme .btn {
+      background: #555;
+      color: #f5f5f5;
+    }
+
+    .dark-theme .remove-btn {
+      color: #ff6666; /* Lighter red for dark mode */
+    }
+
+    .dark-theme #change-address-btn,
+    .dark-theme .change-btn {
+      background: #0056b3;
+    }
+
+    .dark-theme .modal-box {
+      background: #121212;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      color: #f5f5f5;
+    }
+
+    .dark-theme .close-btn {
+      color: #bbb;
+    }
+
+    .dark-theme .add-address {
+      background: linear-gradient(to right, #007bff, #0056b3);
+    }
+
+    .dark-theme .address-card {
+      border: 2px solid #555;
+      background: #1e1e1e;
+    }
+
+    .dark-theme .blue-border {
+      border-color: #0056b3;
+    }
+
+    .dark-theme .form-group label {
+      color: #f5f5f5;
+    }
+
+    .dark-theme .form-group input {
+      background-color: #1e1e1e;
+      color: #f5f5f5;
+      border: 1px solid #666;
+    }
+
+    .dark-theme .save-btn {
+      background: #0056b3;
+    }
+
+    .dark-theme .trusti {
+      color: #f5f5f5;
+    }
+
+    .dark-theme .dash {
+      color: #007bff;
+    }
+
+    .dark-theme .main-header {
+      background: #0d0d0d;
+    }
+
+    /* Dark theme for Payment Options Container and Labels */
+    .dark-theme .payment-options-container {
+      background: #121212; /* Dark background for the container */
+    }
+
+    .dark-theme .payment-options-container label {
+      border: 1px solid #555; /* Darker border for labels */
+      background-color: #1e1e1e; /* Darker background for labels */
+    }
+
+    .dark-theme .payment-options-container label input[type="radio"] {
+      filter: invert(0); /* Invert color for better visibility on dark background */
+    }
+
+    .dark-theme .payment-options-container label strong {
+      color: #f5f5f5; /* Lighter text for strong */
+    }
+
+    .dark-theme .payment-options-container label small {
+      color: #bbb; /* Lighter text for small */
+    }
+
+    .dark-theme .payment-options-container label[for*="cod"] {
+        border: 2px solid #00c6ff; /* A different color for highlighted option in dark mode */
+    }
+
+    .dark-theme .payment-options-container label[for*="netbanking"] {
+        border: 2px solid #00c6ff; /* A different color for highlighted option in dark mode */
+    }
+
+    /* Footer */
+        footer {
+    background-color: #0a0a0a;
+    color: #fff;
+    padding: 60px 30px 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-col h3 {
+    color: #1976ff;
+    margin-bottom: 20px;
+    font-size: 20px;
+    position: relative;
+    font-weight: bold;
+}
+
+.footer-col h3::after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 2px;
+    background-color: #1976ff;
+    margin-top: 8px;
+}
+
+.footer-col p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+.footer-col a {
+    color: #ddd;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.footer-col a:hover {
+    color: #1976ff;
+    transform: translateX(5px);
+}
+
+.footer-col input[type="email"] {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    background-color: #1a1a1a;
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 14px;
+    outline: none;
+}
+
+.footer-col input[type="email"]::placeholder {
+    color: #aaa;
+}
+
+.footer-col button {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    background-color: #1976ff;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: 0.3s ease;
+    font-size: 14px;
+}
+
+.footer-col button:hover {
+    background-color: #145bcc;
+    transform: translateY(-2px);
+}
+
+footer .copyright {
+    text-align: center;
+    padding-top: 30px;
+    margin-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+
+  </style>
+</head>
+<body>
+<header class="main-header">
+  <div class="logo">
+    <span class="trusti">Trusti</span><span class="dash">Dash</span>
+  </div>
+
+  <div class="header-actions">
+    <a href="{% url 'uhome' %}" class="back-link">Home</a>
+    <a href="{% url 'wishlist' %}" class="wishlist-icon">
+    wish list <span class="wishlist-count" id="wishlistCount">0</span>
+    </a>
+    <a href="#" class="signout-icon" id="theme-toggle">Dark</a>
+    <a href="#" class="profile-icon">👤</a>
+  </div>
+</header>
+
+<form method="POST" action="{% url 'buy_items' %}">
+  {% csrf_token %}
+  {{ formset.management_form }}
+
+<div class="cart-container">
+  <div class="cart-items">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
+      <h2 style="margin: 0;">
+        🛒 My Cart ({{ combined_data|length }} item{{ combined_data|length|pluralize }})
+      </h2>
+      <button id="change-address-btn" class="change-btn">Change Address</button>
+    </div>
+
+    <div class="cart-item-section" style="border-bottom: 2px dashed #ccc; padding-bottom: 20px; margin-bottom: 30px;">
+      {% for form, item in combined_data %}
+        <div class="cart-item">
+          <div class="item-image">
+            <img src="{{ item.product_image }}" alt="Product Image">
+          </div>
+          <div class="item-details">
+            <div class="item-name">{{ item.product_name }}</div>
+            <div class="item-brand">{{ item.product_brand }}</div>
+            <div class="item-meta">Available: {{ item.product_quantity }}</div>
+            <div class="item-meta">Discount: {{ item.product_discount }}%</div>
+            <div class="item-price">₹{{ item.discount_price }}</div>
+
+            <div class="quantity-box">
+              <button type="button" class="btn decrease">-</button>
+              {{ form.quantity }}
+              <button type="button" class="btn increase">+</button>
+              {{ form.product_id }}
+            </div>
+
+            <div>Total: ₹<span class="total-price">0.00</span></div>
+          </div>
+          <a class="remove-btn" href="{% url 'cproductdelete' item.cart_id %}">Remove</a>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="payment-options-container">
+      <h3>💳 Payment Options</h3>
+
+      <label>
+        <input type="radio" name="payment_method" value="UPI" style="margin-right: 10px;">
+        <div>
+          <strong>UPI</strong><br>
+          <small>Pay using Google Pay, PhonePe, Paytm & more</small>
+        </div>
+      </label>
+
+      <label>
+        <input type="radio" name="payment_method" value="card" style="margin-right: 10px;">
+        <div>
+          <strong>Credit/Debit Card</strong><br>
+          <small>Visa, Mastercard, RuPay & more</small>
+        </div>
+      </label>
+
+      <label>
+        <input type="radio" name="payment_method" value="netbanking" style="margin-right: 10px;">
+        <div>
+          <strong>Net Banking</strong><br>
+          <small>All major banks supported</small>
+        </div>
+      </label>
+
+      <label>
+        <input type="radio" name="payment_method" value="wallet" style="margin-right: 10px;">
+        <div>
+          <strong>Wallets</strong><br>
+          <small>Paytm, Mobikwik, Amazon Pay & more</small>
+        </div>
+      </label>
+
+      <label>
+        <input type="radio" name="payment_method" value="cod" checked style="margin-right: 10px;">
+        <div>
+          <strong>Cash on Delivery</strong><br>
+          <small>Pay when your order arrives</small>
+        </div>
+      </label>
+    </div>
+
+    <hr>
+    <div class="total-section">Total Discount Price: ₹<span id="grand-total">0.00</span></div>
+
+
+    <div id="address-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>📍 Delivery Address</h3>
+          <button type="button" class="close-btn">&times;</button>
+        </div>
+
+        <button class="add-address">+ Add New Address</button>
+
+        <div class="address-card blue-border">
+          <strong>John Doe</strong><br>
+          123, Gandhi Road, Near City Center, Visakhapatnam, Andhra Pradesh - 530001<br>
+          Phone: 9876543210
+        </div>
+
+        <form method="POST" action="#">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Pincode</label>
+            <input type="text" name="user_pincode" placeholder="530001" value="{{ address.user_pincode }}">
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" name="user_country" placeholder="India" value="{{ address.user_country }}">
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" name="user_state" placeholder="Andhra Pradesh" value="{{ address.user_state }}">
+          </div>
+          <div class="form-group">
+            <label>City / Village</label>
+            <input type="text" name="user_city_or_village" placeholder="Visakhapatnam" value="{{ address.user_city_or_village }}">
+          </div>
+          <div class="form-group">
+            <label>Mundale</label>
+            <input type="text" name="user_mundale" placeholder="Near City Center" value="{{ address.user_mundale }}">
+          </div>
+          <button type="submit" class="save-btn">Save Address</button>
+        </form>
+      </div>
+    </div>
+
+    <button class="buy-btn" type="submit">Place Order</button>
+  </div>
+</div>
+
+</form>
+
+<footer id="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>About Us</h3>
+                <p>BlazeShop is your one-stop destination for the latest electronics, fashion, and home goods. We are
+                    committed to providing quality products and exceptional customer service.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <a href="{% url 'uhome' %}">Home</a>
+                <a href="#rec">Products</a>
+                <a href="#footer">About Us</a>
+                <a href="#footer">Contact Us</a>
+            </div>
+            <div class="footer-col">
+                <h3>Customer Service</h3>
+                <a href="#">My Account</a>
+                <a href="#">Order Tracking</a>
+                <a href="#">Returns & Refunds</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            <div class="footer-col">
+                <h3>Newsletter</h3>
+                <p>Stay updated with our latest offers and news.</p>
+                <input type="email" placeholder="Enter your email">
+                <button>Subscribe</button>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 BlazeShop. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+<script>
+  function updateTotals() {
+    let grandTotal = 0;
+    // Assuming cartItems are globally available or passed
+    const cartItems = document.querySelectorAll('.cart-item');
+
+    cartItems.forEach(item => {
+      const qtyInput = item.querySelector('input[name^="form-"][name$="-quantity"]');
+      const price = parseFloat(item.querySelector('.item-price').textContent.replace('₹', '')) || 0;
+      const totalEl = item.querySelector('.total-price');
+
+      const qty = Math.max(1, parseInt(qtyInput.value) || 1);
+      const total = qty * price;
+      totalEl.textContent = total.toFixed(2);
+      grandTotal += total;
+    });
+
+    document.getElementById('grand-total').textContent = grandTotal.toFixed(2);
+    // These elements don't exist in the provided HTML, so commenting them out.
+    // document.getElementById('price-summary').textContent = originalTotal.toFixed(2);
+    // document.getElementById('discount-summary').textContent = totalDiscount.toFixed(2);
+    // document.getElementById('total-summary').textContent = (grandTotal + 10).toFixed(2); // 10 = platform fee
+    // document.getElementById('you-save').textContent = totalDiscount.toFixed(2);
+  }
+
+  const changeBtn = document.getElementById('change-address-btn');
+  const modal = document.getElementById('address-modal');
+  const closeBtn = document.querySelector('.close-btn');
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  changeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    modal.style.display = 'flex';
+  });
+
+  closeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    modal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  // Theme toggle functionality
+  themeToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    body.classList.toggle('dark-theme');
+    if (body.classList.contains('dark-theme')) {
+      themeToggle.textContent = 'Light';
+      localStorage.setItem('theme', 'dark');
+    } else {
+      themeToggle.textContent = 'Dark';
+      localStorage.setItem('theme', 'light');
+    }
+  });
+
+  // Check for saved theme preference on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      body.classList.add('dark-theme');
+      themeToggle.textContent = 'Light';
+    } else {
+      themeToggle.textContent = 'Dark';
+    }
+
+    const cartItems = document.querySelectorAll('.cart-item');
+    // Handle + button
+    document.querySelectorAll('.increase').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const input = this.parentNode.querySelector('input[name^="form-"][name$="-quantity"]');
+        input.value = parseInt(input.value) + 1;
+        input.dispatchEvent(new Event('input'));
+      });
+    });
+
+    // Handle - button
+    document.querySelectorAll('.decrease').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const input = this.parentNode.querySelector('input[name^="form-"][name$="-quantity"]');
+        input.value = Math.max(1, parseInt(input.value) - 1);
+        input.dispatchEvent(new Event('input'));
+      });
+    });
+
+    // Listen to manual input
+    document.querySelectorAll('input[name^="form-"][name$="-quantity"]').forEach(input => {
+      input.addEventListener('input', updateTotals);
+    });
+
+    // Initial calculation
+    updateTotals();
+  });
+</script>
+
+</body>
+</html>

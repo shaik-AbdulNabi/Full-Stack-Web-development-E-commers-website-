@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sales Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+   
+  <style>
+    /* Light Theme */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f7fa; /* Light background */
+      min-height: 100vh;
+      color: #333; /* Default text color */
+      transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+      display: flex; /* Ensure layout works with fixed sidebar */
+    }
+
+    /* New Rick Look for Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 240px; /* Slightly wider */
+      background: #34495e; /* Darker, modern background */
+      border-right: 1px solid #2c3e50; /* Darker border */
+      padding: 30px 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.15); /* More pronounced shadow */
+      overflow-y: auto;
+      transition: left 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 1000;
+      display: flex; /* Flexbox for internal alignment */
+      flex-direction: column;
+    }
+
+    .sidebar h2 {
+      color: #ecf0f1; /* Light color for title */
+      margin-bottom: 40px; /* More spacing */
+      text-align: center;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      flex-grow: 1; /* Allows list to take available space */
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #ecf0f1; /* Light color for links */
+      display: block;
+      padding: 12px 15px; /* Increased padding */
+      margin-bottom: 8px; /* Space between items */
+      border-radius: 6px; /* Slightly rounded corners for items */
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Space between icon and text */
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #4CAF50; /* Vibrant hover background */
+      color: #ffffff; /* White text on hover */
+      transform: translateX(5px); /* Slight slide effect on hover */
+    }
+    
+    .sidebar ul li a.active {
+      background-color: #007bff; /* Active item background */
+      color: #ffffff; /* White text for active item */
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .sidebar ul li a i {
+        font-size: 20px; /* Adjust icon size */
+    }
+
+    .main {
+      margin-left: 240px; /* Adjusted margin for wider sidebar */
+      padding: 30px 40px;
+      transition: margin-left 0.3s ease;
+      flex: 1; /* Take remaining space */
+    }
+
+    .menu-toggle {
+      display: none; /* Hidden by default, shown on mobile */
+      background: none;
+      border: none;
+      font-size: 26px;
+      margin-bottom: 15px; /* Adjust as needed for spacing */
+      cursor: pointer;
+      color: #333; /* Light mode toggle color */
+      transition: color 0.3s ease;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header h2 {
+      font-size: 24px;
+      color: #2c3e50; /* Light mode header color */
+      transition: color 0.3s ease;
+    }
+
+    .header p {
+      margin-top: 5px;
+      color: #777; /* Light mode paragraph color */
+      transition: color 0.3s ease;
+    }
+
+    .theme-toggle-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333; /* Light mode icon color */
+      transition: color 0.3s ease;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: #fff;
+      padding: 20px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      flex: 1 1 250px;
+      position: relative;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card h4 {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 8px;
+      transition: color 0.3s ease;
+    }
+
+    .card .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #222;
+      transition: color 0.3s ease;
+    }
+
+    .change {
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .increase {
+      color: green;
+    }
+
+    .decrease {
+      color: red;
+    }
+
+    .icon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #eef;
+      padding: 10px;
+      border-radius: 50%;
+      transition: background-color 0.3s ease;
+    }
+
+    .section {
+      margin-top: 40px;
+    }
+
+    .section h3 {
+      margin-bottom: 20px;
+      color: #2c3e50;
+      transition: color 0.3s ease;
+    }
+
+    .chart-row {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 50px;
+    }
+
+    .chart-container {
+      width: 100%;
+      max-width: 500px;
+      flex: 1;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    .chart-container h4 {
+      text-align: center;
+      margin-bottom: 10px;
+      transition: color 0.3s ease;
+    }
+
+    /* Dark Theme */
+    body.dark-theme {
+      background-color: #282c36; /* Dark background */
+      color: #e0e0e0; /* Light text color */
+    }
+
+    .dark-theme .sidebar {
+      background: #1a1e24; /* Even darker for dark theme sidebar */
+      border-right: 1px solid #2f343e; /* Darker border */
+      box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+    }
+
+    .dark-theme .sidebar h2 {
+      color: #61dafb; /* Dark theme accent color for title */
+    }
+
+    .dark-theme .sidebar ul li a {
+      color: #b0b0b0; /* Lighter grey for links in dark mode */
+    }
+
+    .dark-theme .sidebar ul li a:hover {
+      background-color: #21a1f1; /* Dark theme vibrant hover background */
+      color: #ffffff;
+    }
+
+    .dark-theme .sidebar ul li a.active {
+      background-color: #61dafb; /* Dark theme active item background */
+      color: #21252b; /* Dark text for active item in dark mode */
+    }
+
+    .dark-theme .menu-toggle {
+      color: #e0e0e0; /* Dark mode toggle color */
+    }
+
+    .dark-theme .header h2 {
+      color: #e0e0e0; /* Dark mode header color */
+    }
+
+    .dark-theme .header p {
+        color: #b0b0b0; /* Dark theme secondary text */
+    }
+
+    .dark-theme .theme-toggle-btn {
+      color: #e0e0e0; /* Dark mode icon color */
+    }
+
+    .dark-theme .card {
+      background: #2f343e; /* Dark card background */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-theme .card h4 {
+      color: #b0b0b0; /* Dark mode card title color */
+    }
+
+    .dark-theme .card .value {
+      color: #e0e0e0; /* Dark mode card value color */
+    }
+
+    .dark-theme .icon {
+      background: #3a3f4a; /* Dark icon background */
+    }
+
+    .dark-theme .section h3 {
+      color: #e0e0e0; /* Dark mode section heading color */
+    }
+
+    .dark-theme .chart-container {
+      background: #2f343e; /* Dark chart background */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-theme .chart-container h4 {
+      color: #e0e0e0; /* Dark mode chart title color */
+    }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -100%;
+        width: 220px; /* Revert width for mobile */
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .menu-toggle {
+        display: block; /* Show menu toggle button on mobile */
+      }
+
+      .overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+        z-index: 999;
+      }
+
+      .overlay.active {
+        display: block; /* Show overlay when sidebar is active */
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header h2 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i>Dashboard</a></li>
+            <li><a href="{% url 'ahome' %}" ><i class="fas fa-box"></i>Products</a></li>
+            <li><a href="{% url 'analatics' %}"><i class="fas fa-chart-bar"></i>Analytics</a></li>
+            <li><a href="{% url 'upload' %}"><i class="fas fa-upload"></i>Upload Product</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></i>Logout</a></li>
+        </ul>
+  </div>
+
+  <div class="main">
+    <div class="header">
+        <button id="menu-toggle" class="menu-toggle">☰</button>
+        <h2>Dashboard</h2>
+        <button id="theme-toggle-btn" class="theme-toggle-btn">Dark</button>
+    </div>
+    <p>Welcome to your admin dashboard</p>
+
+    <div class="card-container">
+      <div class="card">
+        <h4>Total Sales</h4>
+        <div class="value">₹{{ total_revenue }}</div>
+        <div class="change increase">↑ 12.5% from last month</div>
+        <div class="icon">💰</div>
+      </div>
+
+      <div class="card">
+        <h4>Total Customers</h4>
+        <div class="value">{{ total_users }}</div>
+        <div class="change increase">↑ 15.3% from last month</div>
+        <div class="icon">👥</div>
+      </div>
+
+      <div class="card">
+        <h4>Total Products Sold</h4>
+        <div class="value">{{ total_quantity }}</div>
+        <div class="change increase">↑ 5.7% from last month</div>
+        <div class="icon">📦</div>
+      </div>
+
+      <div class="card">
+        <h4>Monthly Revenue</h4>
+        <div class="value">₹{{ total_revenue }}</div>
+        <div class="change decrease">↓ 2.1% from last month</div>
+        <div class="icon">📈</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Product Sales Distribution</h3>
+      <div class="chart-row">
+        <div class="chart-container">
+          <h4>Top 5 Best-Selling Products</h4>
+          <canvas id="bestSellingChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h4>Least 5 Selling Products</h4>
+          <canvas id="leastSellingChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <script>
+    const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const body = document.body;
+
+        // Toggle sidebar visibility
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        // Hide sidebar when clicking outside
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Function to set the theme and update button text
+        function setTheme(theme) {
+            body.className = theme; // Set the body class directly
+            localStorage.setItem('theme', theme); // Store preference
+            themeToggleBtn.textContent = theme === 'dark-theme' ? 'light' : 'Dark'; // Update icon/text
+        }
+
+        // Check for saved theme in localStorage on page load
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else {
+            // Default to light theme if no preference saved
+            setTheme('light-theme');
+        }
+
+        // Toggle dark theme on button click
+        themeToggleBtn.addEventListener('click', () => {
+            if (body.classList.contains('dark-theme')) {
+                setTheme('light-theme');
+            } else {
+                setTheme('dark-theme');
+            }
+        });
+
+    // Chart.js data and creation
+    
+    const bestSellingLabels = [{% for p in top_products %}"{{ p.product__product_name }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+    const bestSellingData = [{% for p in top_products %}{{ p.total_sold }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+
+    const leastSellingLabels = [{% for p in bottom_products %}"{{ p.product__product_name }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+    const leastSellingData = [{% for p in bottom_products %}{{ p.total_sold }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+
+    const createPieChart = (canvasId, labels, data, colors) => {
+      new Chart(document.getElementById(canvasId), {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: colors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    };
+
+    createPieChart("bestSellingChart", bestSellingLabels, bestSellingData, [
+      "#4CAF50", "#2196F3", "#FFC107", "#FF5722", "#9C27B0"
+    ]);
+
+    createPieChart("leastSellingChart", leastSellingLabels, leastSellingData, [
+      "#F44336", "#00BCD4", "#CDDC39", "#FF9800", "#607D8B"
+    ]);
+  </script>
+</body>
+</html>
